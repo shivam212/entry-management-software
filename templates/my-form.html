@@ -1,0 +1,18 @@
+<a href="/add"> Add host </a>
+<p>Time is {{timenow}}</p>
+<form method="POST">
+</head>
+<body>
+	Select your HOST:<br>
+<select name= hosts method="POST">
+    {% for host in hosts %}
+    <option value= "{{host['name']}}">{{host['name']}}</option>"
+    {% endfor %}
+</select>
+</body>
+	<br>Your Name:<br>
+    <input type="text" name="user" placeholder="Your Name"><br>
+    Your Email:<br>
+    <input type="text" name="email" placeholder="Your Email"><br>
+    <input type="submit" value="Take Appointment">
+</form>
