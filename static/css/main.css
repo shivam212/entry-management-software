@@ -1,5 +1,62 @@
-body 
+body
 {
-    background-color: coral;
+    background: -webkit-radial-gradient(center, #9EFCF6, #1B4EB3) fixed;
+
+}
+.flex-container {
+
+    vertical-align: middle;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: black;
+    background-color: rgb(224,224,224);
+    
+    margin-left:20em;
+    margin-right: 20em;
+    margin-top:10em;
+    border-radius: 10px;
+
+
+}
+a[type=submit], select, textarea{
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  resize: vertical;
 }
 
+
+input[type=text], select, textarea{
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  resize: vertical;
+}
+
+input[type=submit] {
+  background-color: #4CAF50;
+  color: red;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  float: middle;
+}
+.landed{
+    vertical-align: middle;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: black;
+    background-color: rgb(224,224,224);
+    
+    margin-left:20em;
+    margin-right: 20em;
+    margin-top:10em;
+    border-radius: 10px;
+}

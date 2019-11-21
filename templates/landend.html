@@ -1,13 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>LANDED</title>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+	<script type="text/javascript" src="{{ url_for('static', filename = 'clock.js') }}"></script>	
+	<title>LANDED</title>
 </head>
-<body>
-<p>Time is {{timenow}}</p>
-<p>Hi {{user}}, your appointment is with {{host}}, end your appointment here</p>
+<div class="landed">
+	<div >
+		<body onload="startTime()">
+			<div id="txt"></div>
+		</body>
+	Hi {{user}}, your appointment is with {{host}}</br> 
+End your appointment here</br>
 <a href="{{link_text}}">Click</a>
 </select>
-</body>
+</div>
+</div>
 </html>

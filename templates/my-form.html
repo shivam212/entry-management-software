@@ -1,22 +1,27 @@
 <head>
-	<link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
-    <meta charset="UTF-8">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+<script type="text/javascript" src="{{ url_for('static', filename = 'clock.js') }}"></script>
 </head>
+<div align = "center">
 <a href="/add"> Add host </a>
-<p>Time is {{timenow}}</p>
-<form method="POST">
-</head>
-<body>
+<body onload="startTime()">
+<div id="txt"></div>
+</body>
+</div>
+<div class = "flex-container">
+<form method="POST" color = "white" style="max-width:50% ">
+
+
 	Select your HOST:<br>
 <select name= hosts method="POST">
     {% for host in hosts %}
     <option value= "{{host['name']}}">{{host['name']}}</option>"
     {% endfor %}
-</select>
-</body>
+</select><br>
 	<br>Your Name:<br>
-    <input type="text" name="user" placeholder="Your Name"><br>
+    <input type="text" name="user" placeholder="Your Name"><br><br>
     Your Email:<br>
-    <input type="text" name="email" placeholder="Your Email"><br>
+    <input type="text" name="email" placeholder="Your Email"><br><br>
     <input type="submit" value="Take Appointment">
+</div>
 </form>

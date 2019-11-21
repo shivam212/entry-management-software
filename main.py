@@ -37,6 +37,12 @@ def input2():
 		name = request.form["user"]
 		email = request.form["email"]
 		host = request.form["hosts"]
+		with sqlite3.connect("first.db") as con:
+			cur = con.cursor()
+			cur.execute("CREATE TABLE IF NOT EXISTS visit(id integer PRIMARY KEY, visitor text, host text, timestart text)")
+			cur.execute("INSERT into visit(visitor,host,timestart) values(?,?,?)",
+				(name,host,time_start))
+			con.commit()
 		stuff = "http://127.0.0.1:5000"+url_for("visiturl",visitor=name)
 		send_mail1(name,host,stuff,email,time_string)
 		send_mail3(name,host,email,time_date,time_start)
@@ -56,7 +62,7 @@ def visiturl(visitor):
 	if request.method == "GET":
 		return(render_template("button.html"))
 	elif request.method == "POST":
-		send_mail2(visitor,"17uec115@lnmiit.ac.in")
+		send_mail2(visitor)
 		return(render_template("end.html"))
 def send_mail1(name,host,stuff,email,timenow):
 	s = smtplib.SMTP(host='smtp.gmail.com', port=587)
@@ -71,14 +77,24 @@ def send_mail1(name,host,stuff,email,timenow):
 	s.send_message(msg)
 	del msg
 	s.quit()		
-def send_mail2(name,email):
+def send_mail2(name):
+	with sqlite3.connect("first.db") as con:
+		cur = con.cursor()
+		cur2 = con.cursor()
+		cur.execute("SELECT host,timestart FROM visit WHERE visitor=(?)",(name,))
+		answer = cur.fetchone()
+		cur2.execute("SELECT email FROM hosts WHERE name=(?)",(answer[0],))
+		answer2 = cur2.fetchone()
+		print((answer), file=sys.stderr)
+		print((answer2), file=sys.stderr)
+		# con.commit()
 	s = smtplib.SMTP(host='smtp.gmail.com', port=587)
 	s.starttls()
 	s.login(MY_ADDRESS, PASSWORD)
 	msg = MIMEMultipart();
 	msg['From']=MY_ADDRESS
-	msg['To']=email
-	msg['Subject']='Your Meeting'
+	msg['To']=answer2[0]
+	msg['Subject']='Your Meeting with ' + answer[0]
 	message = "How was your meeting Mr." + name
 	msg.attach(MIMEText(message,'plain'))
 	s.send_message(msg)
