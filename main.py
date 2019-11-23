@@ -20,10 +20,11 @@ def add_host():
 		name = request.form["hostname"]
 		phoneno = request.form["phoneno"]
 		email = request.form["email"]
+		address = request.form["Address"]
 		with sqlite3.connect("first.db") as con:
 			cur = con.cursor()
-			cur.execute("INSERT into hosts(name,email,phone)values(?,?,?)",
-				(name,email,phoneno))
+			cur.execute("INSERT into hosts(name,email,address,phone)values(?,?,?,?)",
+				(name,email,address,phoneno))
 			con.commit()
 			# con.close()
 		return(render_template("add_hosts2.html"))
@@ -57,7 +58,7 @@ def input2():
 		cur.execute("SELECT * FROM hosts")
 		hosts=cur.fetchall()
 		return (render_template("my-form.html",hosts=hosts,timenow=time_string))
-		
+
 @app.route("/appoint/<visitor>",methods=["GET", "POST"])
 def visiturl(visitor):
 	if request.method == "GET":
@@ -73,7 +74,7 @@ def visiturl(visitor):
 			details = cur.fetchone()
 			cur.execute("DELETE FROM visit WHERE visitor=(?)",(visitor,))
 			cur.execute("INSERT INTO totallog(visitor,visitor_email,host,timestart,timeend) values(?,?,?,?,?)",(details[1],details[2],details[3],details[4],time_start))
-		send_mail2(visitor)
+		send_mail2(visitor,details[2])
 		return(render_template("end.html",host=details[3],timestart=details[4],timeend=time_start))
 def send_mail1(name,host,stuff,email,timenow):
 	s = smtplib.SMTP(host='smtp.gmail.com', port=587)
@@ -88,13 +89,13 @@ def send_mail1(name,host,stuff,email,timenow):
 	s.send_message(msg)
 	del msg
 	s.quit()		
-def send_mail2(name):
+def send_mail2(name,email):
 	with sqlite3.connect("first.db") as con:
 		cur = con.cursor()
 		cur2 = con.cursor()
 		cur.execute("SELECT host,timestart,timeend FROM totallog WHERE visitor=(?)",(name,))
 		answer = cur.fetchone()
-		cur2.execute("SELECT email FROM hosts WHERE name=(?)",(answer[0],))
+		cur2.execute("SELECT address,phone FROM hosts WHERE name=(?)",(answer[0],))
 		answer2 = cur2.fetchone()
 		print((answer), file=sys.stderr)
 		print((answer2), file=sys.stderr)
@@ -104,9 +105,9 @@ def send_mail2(name):
 	s.login(MY_ADDRESS, PASSWORD)
 	msg = MIMEMultipart();
 	msg['From']=MY_ADDRESS
-	msg['To']=answer2[0]
+	msg['To']=email
 	msg['Subject']='Your Meeting with ' + answer[0]
-	message = "Details of meeting.\n Name of Visitor : " + name + "\n" + "Check-In Time : " + answer[1] + "\nCheckOut Time : " + answer[2]
+	message = "Details of meeting.\n Name of Visitor : " + name + "\n" + "Check-In Time : " + answer[1] + "\nCheckOut Time : " + answer[2] +"\nAddress :"+answer2[0]+"\nPhone"+str(answer2[1])
 	msg.attach(MIMEText(message,'plain'))
 	s.send_message(msg)
 	del msg
