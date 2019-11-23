@@ -1,8 +1,14 @@
+<html>
 <head>
     <meta charset="UTF-8">
 	<link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
     <title>LANDED</title>
 </head>
-<html>
-<p>Session has ended.</p>
+<div class="flex-container">
+<h2>Your Meeting has ended</h2></br>
+<p>The details are</p><br>
+<p>HOST: {{host}}</p><br>
+<p>Check-In time : {{timestart}}</p><br>
+<p>Check-out time : {{timeend}}</p><br>
+</div>
 </html>

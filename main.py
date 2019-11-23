@@ -27,6 +27,7 @@ def add_host():
 			con.commit()
 			# con.close()
 		return(render_template("add_hosts2.html"))
+
 @app.route("/",methods=["GET", "POST"])
 def input2():
 	if request.method == "POST":
@@ -39,9 +40,8 @@ def input2():
 		host = request.form["hosts"]
 		with sqlite3.connect("first.db") as con:
 			cur = con.cursor()
-			cur.execute("CREATE TABLE IF NOT EXISTS visit(id integer PRIMARY KEY, visitor text, host text, timestart text)")
-			cur.execute("INSERT into visit(visitor,host,timestart) values(?,?,?)",
-				(name,host,time_start))
+			cur.execute("INSERT into visit(visitor,visitor_email,host,timestart) values(?,?,?,?)",
+				(name,email,host,time_start))
 			con.commit()
 		stuff = "http://127.0.0.1:5000"+url_for("visiturl",visitor=name)
 		send_mail1(name,host,stuff,email,time_string)
@@ -57,13 +57,24 @@ def input2():
 		cur.execute("SELECT * FROM hosts")
 		hosts=cur.fetchall()
 		return (render_template("my-form.html",hosts=hosts,timenow=time_string))
+		
 @app.route("/appoint/<visitor>",methods=["GET", "POST"])
 def visiturl(visitor):
 	if request.method == "GET":
 		return(render_template("button.html"))
 	elif request.method == "POST":
+		named_tuple = time.localtime() 
+		time_string = time.strftime("%m/%d/%Y, %H:%M:%S", named_tuple)
+		time_date = time.strftime("%m/%d/%Y")
+		time_start = time.strftime("%H:%M:%S")
+		with sqlite3.connect("first.db") as con:
+			cur=con.cursor()
+			cur.execute("SELECT * from visit where visitor=(?)",(visitor,))
+			details = cur.fetchone()
+			cur.execute("DELETE FROM visit WHERE visitor=(?)",(visitor,))
+			cur.execute("INSERT INTO totallog(visitor,visitor_email,host,timestart,timeend) values(?,?,?,?,?)",(details[1],details[2],details[3],details[4],time_start))
 		send_mail2(visitor)
-		return(render_template("end.html"))
+		return(render_template("end.html",host=details[3],timestart=details[4],timeend=time_start))
 def send_mail1(name,host,stuff,email,timenow):
 	s = smtplib.SMTP(host='smtp.gmail.com', port=587)
 	s.starttls()
@@ -81,7 +92,7 @@ def send_mail2(name):
 	with sqlite3.connect("first.db") as con:
 		cur = con.cursor()
 		cur2 = con.cursor()
-		cur.execute("SELECT host,timestart FROM visit WHERE visitor=(?)",(name,))
+		cur.execute("SELECT host,timestart,timeend FROM totallog WHERE visitor=(?)",(name,))
 		answer = cur.fetchone()
 		cur2.execute("SELECT email FROM hosts WHERE name=(?)",(answer[0],))
 		answer2 = cur2.fetchone()
@@ -95,7 +106,7 @@ def send_mail2(name):
 	msg['From']=MY_ADDRESS
 	msg['To']=answer2[0]
 	msg['Subject']='Your Meeting with ' + answer[0]
-	message = "How was your meeting Mr." + name
+	message = "Details of meeting.\n Name of Visitor : " + name + "\n" + "Check-In Time : " + answer[1] + "\nCheckOut Time : " + answer[2]
 	msg.attach(MIMEText(message,'plain'))
 	s.send_message(msg)
 	del msg
@@ -117,11 +128,11 @@ def send_mail3(name,host,visem,time_date,timestart):
 	msg.attach(MIMEText(message,'plain'))
 	s.send_message(msg)
 	del msg 
-# con = sqlite3.connect("first.db")
-# curs = con.cursor()
-# curs.execute("CREATE TABLE IF NOT EXISTS hosts(id integer PRIMARY KEY, name text, email text, phone real)")
-# con.commit()
-# curs.execute("INSERT INTO hosts VALUES(1, 'utkarsh','ukulshr',12345)")
-# con.commit()
 if __name__=="__main__":
+	con = sqlite3.connect("first.db")
+	curs = con.cursor()
+	curs.execute("CREATE TABLE IF NOT EXISTS hosts(id integer PRIMARY KEY, name text, email text, address text, phone real)")
+	curs.execute("CREATE TABLE IF NOT EXISTS totallog(id integer PRIMARY KEY, visitor text, visitor_email text, vistitor_phone real, host text, timestart text, timeend text)")
+	curs.execute("CREATE TABLE IF NOT EXISTS visit(id integer PRIMARY KEY, visitor text,visitor_email text, host text, timestart text)")
+	con.commit()
 	app.run(debug=True)

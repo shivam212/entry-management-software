@@ -3,10 +3,12 @@
 	<link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
     <title>LANDED</title>
 </head>
+<div class="flex-container">
+<form method="POST" style="width: 200px">
 <a href='/'>Home</a>
-<form method="POST">
     <input type="text" name="hostname" placeholder="Host Name">
     <input type="text" name="email" placeholder="Host Email">
     <input type="text" name="phoneno" placeholder="Host Phone">
-    <input type="submit">
+    <input type="submit" value="Add New Host">
 </form>
+</div>
