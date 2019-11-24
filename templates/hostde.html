@@ -1,0 +1,17 @@
+<html>
+<head>
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+</head>
+<div class="flex-container">
+<h2> Details for {{host}}</h2>
+{%for detail in details%}
+</br>
+<h2>Visitor No : {{loop.index}}</h2>
+<a> Visitor Name : {{detail[1]}} </a><br>
+<a> Visitor Email : {{detail[2]}} </a><br>
+<a> Date : {{detail[7]}}</a></br>
+<a> Check-In Time : {{detail[5]}} </a><br>
+<a> Check-Out Time : {{detail[6]}} </a><br>
+<br>
+{%endfor%}
+</html>

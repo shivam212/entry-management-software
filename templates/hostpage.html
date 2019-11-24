@@ -1,0 +1,12 @@
+<html>
+<head>
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+</head>
+<div class="flex-container">
+<form method="POST" style="width: 200px">
+<a href="{{ url_for('add_host') }}">ADD HOST</a><br>
+<a href="{{ url_for('delete_host')}}">DELETE HOST</a><br>
+<a href="{{url_for('host_details')}}">HOST DETAILS</a><br>
+</form>
+</div>
+</html>

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <meta charset="UTF-8">
+</head>
+<div class="flex-container">
+	<h2> SELECT HOST TO BE DELETED </h2>
+<form method="POST" style="width: 200px">	
+<select name= hosts method="GET">
+    {% for host in hosts %}
+    <option value= "{{host['name']}}" SELECTED>{{host['name']}}</option>"
+    {% endfor %}
+</select></br>
+</br>
+    <input type="submit" value="DELETE!">
+</form>
+</div>
+</html>

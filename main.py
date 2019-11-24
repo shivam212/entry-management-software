@@ -9,9 +9,27 @@ from string import Template
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from time import gmtime, strftime
-MY_ADDRESS = 'spikesensei69@gmail.com'
+MY_ADDRESS = 'managerentry@gmail.com'
 PASSWORD = 'timepass9'
 app = Flask(__name__)
+@app.route("/delete",methods=["GET","POST"])
+def delete_host():
+	if request.method=="GET":
+		con = sqlite3.connect("first.db")
+		con.row_factory = sqlite3.Row
+		cur = con.cursor()
+		cur.execute("SELECT * FROM hosts")
+		hosts=cur.fetchall()
+		return(render_template("hostdelete.html",hosts=hosts))
+	elif request.method=="POST":
+		todel = request.form["hosts"]
+		print(todel, file=sys.stderr)
+		with sqlite3.connect("first.db") as con:
+			cur = con.cursor()
+			cur.execute("DELETE from hosts WHERE name=(?) ",
+				(todel,))
+			con.commit()
+		return ("check krle")
 @app.route("/add",methods=["GET","POST"])
 def add_host():
 	if request.method=="GET":
@@ -28,13 +46,33 @@ def add_host():
 			con.commit()
 			# con.close()
 		return(render_template("add_hosts2.html"))
-
+@app.route("/hostdetails",methods=["GET","POST"])
+def host_details():
+	if request.method=="GET":
+		con = sqlite3.connect("first.db")
+		con.row_factory = sqlite3.Row
+		cur = con.cursor()
+		cur.execute("SELECT * FROM hosts")
+		hosts=cur.fetchall()
+		return(render_template("hostse.html",hosts=hosts))
+	elif request.method=="POST":
+		host=request.form["hosts"]
+		with sqlite3.connect("first.db") as con:
+			cur = con.cursor()
+			cur.execute("SELECT * from totallog WHERE host=(?)",
+				(host,))
+			details=cur.fetchall()
+		print(details, file=sys.stderr)
+		return(render_template("hostde.html",host=host,details=details))
+@app.route("/hostpanel",methods=["GET","POST"])
+def host_panel():
+	return(render_template("hostpage.html"))
 @app.route("/",methods=["GET", "POST"])
 def input2():
 	if request.method == "POST":
 		named_tuple = time.localtime() 
 		time_string = time.strftime("%m/%d/%Y, %H:%M:%S", named_tuple)
-		time_date = time.strftime("%m/%d/%Y")
+		time_date = time.strftime("%d/%m/%Y")
 		time_start = time.strftime("%H:%M:%S")
 		name = request.form["user"]
 		email = request.form["email"]
@@ -62,6 +100,12 @@ def input2():
 @app.route("/appoint/<visitor>",methods=["GET", "POST"])
 def visiturl(visitor):
 	if request.method == "GET":
+		with sqlite3.connect("first.db") as con:
+			cur=con.cursor()
+			cur.execute("SELECT * from visit where visitor=(?)",(visitor,))
+			details = cur.fetchone()
+		if details==None:
+			return("Does not exist")
 		return(render_template("button.html"))
 	elif request.method == "POST":
 		named_tuple = time.localtime() 
@@ -73,7 +117,7 @@ def visiturl(visitor):
 			cur.execute("SELECT * from visit where visitor=(?)",(visitor,))
 			details = cur.fetchone()
 			cur.execute("DELETE FROM visit WHERE visitor=(?)",(visitor,))
-			cur.execute("INSERT INTO totallog(visitor,visitor_email,host,timestart,timeend) values(?,?,?,?,?)",(details[1],details[2],details[3],details[4],time_start))
+			cur.execute("INSERT INTO totallog(visitor,visitor_email,host,timestart,timeend,dat) values(?,?,?,?,?,?)",(details[1],details[2],details[3],details[4],time_start,time_date))
 		send_mail2(visitor,details[2])
 		return(render_template("end.html",host=details[3],timestart=details[4],timeend=time_start))
 def send_mail1(name,host,stuff,email,timenow):
@@ -84,7 +128,7 @@ def send_mail1(name,host,stuff,email,timenow):
 	msg['From']=MY_ADDRESS
 	msg['To']=email
 	msg['Subject']='Your Meeting'
-	message = "Hi ,\n" + name + "Your meeting with " + host + " started at " + timenow + ". \nEnd your meeting at - " + stuff + " ."
+	message = "Hi," + name + "Your meeting with " + host + " started at " + timenow + ".\nEnd your meeting at - " + stuff + " ."
 	msg.attach(MIMEText(message,'plain'))
 	s.send_message(msg)
 	del msg
@@ -107,7 +151,7 @@ def send_mail2(name,email):
 	msg['From']=MY_ADDRESS
 	msg['To']=email
 	msg['Subject']='Your Meeting with ' + answer[0]
-	message = "Details of meeting.\n Name of Visitor : " + name + "\n" + "Check-In Time : " + answer[1] + "\nCheckOut Time : " + answer[2] +"\nAddress :"+answer2[0]+"\nPhone"+str(answer2[1])
+	message = "Details of meeting.\n Name of Visitor : " + name + "\n" + "Check-In Time : " + answer[1] + "\nCheckOut Time : " + answer[2] +"\nAddress :"+answer2[0]+"\nPhone"+str(int(answer2[1]))
 	msg.attach(MIMEText(message,'plain'))
 	s.send_message(msg)
 	del msg
@@ -133,7 +177,7 @@ if __name__=="__main__":
 	con = sqlite3.connect("first.db")
 	curs = con.cursor()
 	curs.execute("CREATE TABLE IF NOT EXISTS hosts(id integer PRIMARY KEY, name text, email text, address text, phone real)")
-	curs.execute("CREATE TABLE IF NOT EXISTS totallog(id integer PRIMARY KEY, visitor text, visitor_email text, vistitor_phone real, host text, timestart text, timeend text)")
+	curs.execute("CREATE TABLE IF NOT EXISTS totallog(id integer PRIMARY KEY, visitor text, visitor_email text, vistitor_phone real, host text, timestart text, timeend text, dat text)")
 	curs.execute("CREATE TABLE IF NOT EXISTS visit(id integer PRIMARY KEY, visitor text,visitor_email text, host text, timestart text)")
 	con.commit()
 	app.run(debug=True)

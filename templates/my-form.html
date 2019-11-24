@@ -3,9 +3,9 @@
 <script type="text/javascript" src="{{ url_for('static', filename = 'clock.js') }}">showtime();</script>
 </head>
 <div align = "center">
-<a href = "/add">
-<img alt = "Add host" src = https://i.ibb.co/3F3ymMF/add-user.png height="50" width="50">
-<b>Add host</b> </a>
+<a href = "{{url_for('host_panel')}}">
+<img alt = "Host Panel" src = https://i.ibb.co/3F3ymMF/add-user.png height="50" width="50">
+<b>Host Panel</b> </a>
 <body onload="startTime()">
 <div id="txt"></div>
 </body>
