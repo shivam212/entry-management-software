@@ -1,0 +1,20 @@
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <meta charset="UTF-8">
+    <meta http-equiv="refresh" content="10">
+</head>
+<div class="flex-container">
+<a href="{{url_for('visiturl',visitor=name)}}">End Your Appointment</a>
+{% if flag==1 %}
+<p>Strike a conversation!</p>
+{% else %}
+<h2>Your messages!</h2>
+{% for x in allmsg  %}
+ <p>{{x[1]}}:{{x[2]}}</p>   
+{% endfor %}
+{% endif %}
+<form method="POST" style="width: 200px">	
+        <input type="text" name="sendmsg" placeholder="Your Message"><br><br>            
+        <input type="submit" value="SEND">
+</form>    
+</div>
