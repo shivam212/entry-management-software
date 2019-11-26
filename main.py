@@ -29,7 +29,7 @@ def delete_host():
 			cur.execute("DELETE from hosts WHERE name=(?) ",
 				(todel,))
 			con.commit()
-		return ("check krle")
+		return(render_template("hostdelete.html",hosts=hosts))
 @app.route("/add",methods=["GET","POST"])
 def add_host():
 	if request.method=="GET":
@@ -71,7 +71,7 @@ def host_panel():
 def input2():
 	if request.method == "POST":
 		named_tuple = time.localtime() 
-		time_string = time.strftime("%m/%d/%Y, %H:%M:%S", named_tuple)
+		time_string = time.strftime("%d/%m/%Y, %H:%M:%S", named_tuple)
 		time_date = time.strftime("%d/%m/%Y")
 		time_start = time.strftime("%H:%M:%S")
 		name = request.form["user"]
@@ -83,8 +83,8 @@ def input2():
 				(name,email,host,time_start))
 			con.commit()
 		stuff = "http://127.0.0.1:5000"+url_for("visiturl",visitor=name)
-		send_mail1(name,host,stuff,email,time_string)
-		send_mail3(name,host,email,time_date,time_start)
+		send_visitor(name,host,stuff,email,time_string)
+		send_host_start(name,host,email,time_date,time_start)
 		return(render_template("landend.html",user=name,host=host,link_text=stuff,timenow=time_string))
 		return redirect(request.url)
 	elif request.method == "GET":
@@ -118,9 +118,9 @@ def visiturl(visitor):
 			details = cur.fetchone()
 			cur.execute("DELETE FROM visit WHERE visitor=(?)",(visitor,))
 			cur.execute("INSERT INTO totallog(visitor,visitor_email,host,timestart,timeend,dat) values(?,?,?,?,?,?)",(details[1],details[2],details[3],details[4],time_start,time_date))
-		send_mail2(visitor,details[2])
+		send_visitor_2(visitor,details[2])
 		return(render_template("end.html",host=details[3],timestart=details[4],timeend=time_start))
-def send_mail1(name,host,stuff,email,timenow):
+def send_visitor(name,host,stuff,email,timenow):
 	s = smtplib.SMTP(host='smtp.gmail.com', port=587)
 	s.starttls()
 	s.login(MY_ADDRESS, PASSWORD)
@@ -133,7 +133,7 @@ def send_mail1(name,host,stuff,email,timenow):
 	s.send_message(msg)
 	del msg
 	s.quit()		
-def send_mail2(name,email):
+def send_visitor_2(name,email):
 	with sqlite3.connect("first.db") as con:
 		cur = con.cursor()
 		cur2 = con.cursor()
@@ -156,7 +156,7 @@ def send_mail2(name,email):
 	s.send_message(msg)
 	del msg
 	s.quit()
-def send_mail3(name,host,visem,time_date,timestart):
+def send_host_start(name,host,visem,time_date,timestart):
 	with sqlite3.connect("first.db") as con:
 		cur = con.cursor()
 		cur.execute("SELECT email FROM hosts WHERE name=(?)",(host,))
