@@ -7,6 +7,7 @@ from wtforms import Form, TextField, TextAreaField, validators, StringField, Sub
 from string import Template
 from time import gmtime, strftime
 from message import send_visitor,send_host_start,send_visitor_2
+from txtmsg import send_text_visitor,send_text_host_start,send_text_visitor_2
 app = Flask(__name__)
 @app.route("/delete",methods=["GET","POST"])
 def delete_host():
@@ -24,6 +25,8 @@ def delete_host():
 			cur = con.cursor()
 			cur.execute("DELETE from hosts WHERE name=(?) ",
 				(todel,))
+			cur.execute("SELECT * FROM hosts")
+			hosts=cur.fetchall()
 			con.commit()
 		return(render_template("hostdelete.html",hosts=hosts))
 @app.route("/add",methods=["GET","POST"])
@@ -72,36 +75,69 @@ def home():
 		name = request.form["user"]
 		email = request.form["email"]
 		host = request.form["hosts"]
+		phone = request.form["phone"]
+		print(host,file=sys.stderr)
 		if request.form["submit-button"]=="Take Appointment":
+			with sqlite3.connect("first.db") as con:
+				cur = con.cursor()
+				cur.execute("SELECT * from visit")
+				meet=cur.fetchall()
+				cur.execute("SELECT * FROM hosts")
+				hosts1=cur.fetchall()
+				cur.execute("SELECT host FROM visit")
+				busy = cur.fetchall()
+				con.commit()
 			with sqlite3.connect("first.db") as con:
 				cur = con.cursor()
 				cur.execute("INSERT into visit(visitor,visitor_email,host,timestart) values(?,?,?,?)",
 					(name,email,host,time_start))
-				con.commit()
-			stuff = url_for("visiturl",visitor=name)
-			send_visitor(name,host,stuff,email,time_string)
-			send_host_start(name,host,email,time_date,time_start)
-			return(render_template("landend.html",user=name,host=host,link_text=stuff,timenow=time_string))
+			new=[]
+			for hosta in hosts1:
+				if (hosta[1],) in busy:
+					new.append([hosta[1]+"(Not Available)",hosta[1]])
+				else:
+					new.append([hosta[1]+"(Available)",hosta[1]])
+			if (host,) in busy:
+				return (render_template("my-form.html",hosts=new,timenow=time_string))
+			else:
+				stuff = url_for("visiturl",visitor=name)
+				send_visitor(name,host,stuff,email,time_string)
+				send_text_visitor(name,host,stuff,phone,time_string)
+				send_host_start(name,host,email,time_date,time_start)
+				send_text_host_start(name,host,email,time_date,time_start)
+				return(render_template("landend.html",user=name,host=host,link_text=stuff,timenow=time_string))
 		elif request.form["submit-button"]=="Take Remote Appointment(Chat)":
 			with sqlite3.connect("first.db") as con:
 				cur = con.cursor()
 				cur.execute("INSERT into visit(visitor,visitor_email,host,timestart) values(?,?,?,?)",
 					(name,email,host,time_start))
 				con.commit()	
+			print(url_for("messaginghost",visitor=name,host=host))
+			print(name,host)
 			return(render_template("msgstart.html",link = url_for("messagingvisitor",visitor=name,host=host)))
 	elif request.method == "GET":
 		named_tuple = time.localtime() 
 		time_string = time.strftime("%d/%m/%Y, %H:%M:%S", named_tuple)
-		con = sqlite3.connect("first.db")
-		con.row_factory = sqlite3.Row
-		cur = con.cursor()
-		cur.execute("SELECT * FROM hosts")
-		hosts=cur.fetchall()
-		return (render_template("my-form.html",hosts=hosts,timenow=time_string))
-@app.route("/message/<host>/<visitor>",methods=["GET","POST"])
-def messaginghost(host,visitor):
+		with sqlite3.connect("first.db") as con:
+			cur = con.cursor()
+			cur.execute("SELECT * FROM hosts")
+			hosts=cur.fetchall()
+			cur.execute("SELECT host FROM visit")
+			busy = cur.fetchall()
+			print(busy,hosts,file=sys.stderr)
+		new=[]
+		for hosta in hosts:
+			if (hosta[1],) in busy:
+				new.append([hosta[1]+"(Not Available)",hosta[1]])
+			else:
+				new.append([hosta[1]+"(Available)",hosta[1]])
+		print(new)
+		return (render_template("my-form.html",hosts=new,timenow=time_string))
+@app.route("/messagehost/<visitor>/<host>",methods=["GET","POST"])
+def messaginghost(visitor,host):
 	flag=0
 	allmsg=[]
+	link = url_for("visiturl",visitor=visitor)
 	if request.method=="POST":
 		msg=request.form["sendmsg"]
 		print(msg,file=sys.stderr)
@@ -110,22 +146,30 @@ def messaginghost(host,visitor):
 			cur.execute("INSERT INTO messages(sender,message) values(?,?)",(host,msg))
 			cur.execute("SELECT * from messages")
 			allmsg=cur.fetchall()
-			con.commit()
-		print(allmsg,file=sys.stderr)
+			cur.execute("SELECT message from messages WHERE sender=(?)",(visitor,))
+			msge = cur.fetchall()
+			con.commit()		
 		if(allmsg==None):
 			flag=1
+		print("hi",msge,file=sys.stderr)
+		if ('hasended',) in msge:
+			return ("meeting ended")
 		return	(render_template("msg.html",flag=flag,allmsg=allmsg,name=visitor))
 	elif request.method=="GET":
 		with sqlite3.connect("first.db") as con:
 			cur = con.cursor()
 			cur.execute("SELECT * from messages")
 			allmsg=cur.fetchall()
+			cur.execute("SELECT message from messages WHERE sender=(?)",(visitor,))
+			msge = cur.fetchall()
 			con.commit()
-		print(allmsg,file=sys.stderr)
+		print(msge,file=sys.stderr)
+		if ('hasended',) in msge:
+			return ("meeting ended")
 		if(allmsg==None):
 			flag=1
 		return	(render_template("msg.html",flag=flag,allmsg=allmsg,name=visitor))
-@app.route("/message/<visitor>/<host>",methods=["GET","POST"])
+@app.route("/messagevisit/<visitor>/<host>",methods=["GET","POST"])
 def messagingvisitor(visitor,host):
 	flag=0
 	allmsg=[]
@@ -138,10 +182,21 @@ def messagingvisitor(visitor,host):
 			cur.execute("SELECT * from messages")
 			allmsg=cur.fetchall()
 			con.commit()
+		print("host=",host,"visitor=",visitor,file=sys.stderr)
+		if(allmsg==None):
+			flag=1
+		return	(render_template("msg.html",flag=flag,allmsg=allmsg,name=visitor))
+	elif request.method=="GET":
+		print("host=",host,"visitor=",visitor,file=sys.stderr)
+		with sqlite3.connect("first.db") as con:
+			cur = con.cursor()
+			cur.execute("SELECT * from messages")
+			allmsg=cur.fetchall()
+			con.commit()
 		print(allmsg,file=sys.stderr)
 		if(allmsg==None):
 			flag=1
-	return	(render_template("msg.html",flag=flag,allmsg=allmsg,name=visitor))
+		return	(render_template("msg.html",flag=flag,allmsg=allmsg,name=visitor))
 @app.route("/appoint/<visitor>",methods=["GET", "POST"])
 def visiturl(visitor):
 	if request.method == "GET":
@@ -164,8 +219,11 @@ def visiturl(visitor):
 			cur.execute("DELETE FROM visit WHERE visitor=(?)",(visitor,))
 			cur.execute("DELETE FROM messages WHERE sender=(?)",(visitor,))
 			cur.execute("DELETE FROM messages WHERE sender=(?)",(details[3],))
+			cur.execute("DELETE FROM messages WHERE sender=(?)",(details[3],))
+			cur.execute("INSERT INTO messages(sender,message) values(?,?)",(visitor,"hasended"))
 			cur.execute("INSERT INTO totallog(visitor,visitor_email,host,timestart,timeend,dat) values(?,?,?,?,?,?)",(details[1],details[2],details[3],details[4],time_start,time_date))
 		send_visitor_2(visitor,details[2])
+		send_text_visitor_2(visitor)
 		return(render_template("end.html",host=details[3],timestart=details[4],timeend=time_start))
 if __name__=="__main__":
 	con = sqlite3.connect("first.db")

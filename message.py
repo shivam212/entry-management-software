@@ -39,7 +39,7 @@ def send_visitor_2(name,email):
 	msg['From']=MY_ADDRESS
 	msg['To']=email
 	msg['Subject']='Your Meeting with ' + answer[0]
-	message = "Details of meeting.\n Name of Visitor : " + name + "\n" + "Check-In Time : " + answer[1] + "\nCheckOut Time : " + answer[2] +"\nAddress :"+answer2[0]+"\nPhone"+str(int(answer2[1]))
+	message = "Details of meeting.\n Name of Visitor : " + name + "\n" + "Check-In Time : " + answer[1] + "\nCheckOut Time : " + answer[2] +"\nAddress :"+answer2[0]+"\nPhone :"+str(int(answer2[1]))
 	msg.attach(MIMEText(message,'plain'))
 	s.send_message(msg)
 	del msg

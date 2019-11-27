@@ -18,13 +18,15 @@
 	<br><h2>Select your HOST:</h2>
 <select name= hosts method="POST">
     {% for host in hosts %}
-    <option value= "{{host['name']}}">{{host['name']}}</option>"
+    <option value= "{{host[1]}}">{{host[0]}}</option>"
     {% endfor %}
 </select><br>
 	<br><h2>Your Name:</h2>
     <input type="text" name="user" placeholder="Your Name"><br><br>
     <h2>Your Email:</h2>
     <input type="text" name="email" placeholder="Your Email"><br><br>
+    <h2>Your Phone No:</h2>
+    <input type="text" name="phone" placeholder="Your Phone"><br><br>
     <input type="submit" name= "submit-button" value="Take Appointment"><br><br>
     <input type="submit" name ="submit-button" value="Take Remote Appointment(Chat)">
 </div>
