@@ -25,7 +25,7 @@ def send_text_host_start(name,host,visem,time_date,timestart):
         phone=cur.fetchone()[0]
     message = 'You have a Visitor! \n Name : {}\n Email : {}\n Time : {}\n Date : {}'.format(name,visem,timestart,time_date)
     client = Client("AC222e4838d657fd4fe0517a91d637e6e8","6c260eac51666b46067dd07d807ff99a")
-    # client.messages.create(to="+91"+str(int(phone)),from_="12018015038",body=message)
+    client.messages.create(to="+91"+str(int(phone)),from_="12018015038",body=message)
     print(phone,file=sys.stderr)
 
 

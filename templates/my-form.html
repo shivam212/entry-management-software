@@ -13,8 +13,7 @@
 <div class = "flex-container">
 
 <form method="POST" color = "white" style="max-width:50% ">
-
-
+    {{form.csrf_token}}
 	<br><h2>Select your HOST:</h2>
 <select name= hosts method="POST">
     {% for host in hosts %}
@@ -22,12 +21,15 @@
     {% endfor %}
 </select><br>
 	<br><h2>Your Name:</h2>
-    <input type="text" name="user" placeholder="Your Name"><br><br>
+    {{form.name}}<br><br>
+    {% if form.name.errors %}
+        <ul class="errors">{% for error in form.name.errors %}<li>{{ error }}</li>{% endfor %}</ul>
+    {% endif %}
     <h2>Your Email:</h2>
-    <input type="text" name="email" placeholder="Your Email"><br><br>
+    {{form.email}}<br><br>
     <h2>Your Phone No:</h2>
-    <input type="text" name="phone" placeholder="Your Phone"><br><br>
-    <input type="submit" name= "submit-button" value="Take Appointment"><br><br>
-    <input type="submit" name ="submit-button" value="Take Remote Appointment(Chat)">
+    {{form.phone(size=10)}}<br><br>
+    {{form.submitapp()}}<br><br>
+    {{form.submitchat()}}
 </div>
 </form>
