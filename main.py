@@ -9,8 +9,8 @@ from forms import LoginForm
 from wtforms import Form, TextField, TextAreaField, validators, StringField, SubmitField
 from string import Template
 from time import gmtime, strftime
-from message import send_visitor,send_host_start,send_visitor_2
-from txtmsg import send_text_visitor,send_text_host_start,send_text_visitor_2
+from message import send_visitor,send_host_start,send_visitor_2,send_host_start_chat
+from txtmsg import send_text_visitor,send_text_host_start,send_text_visitor_2,send_text_host_start_chat
 app = Flask(__name__)
 csrf = CSRFProtect()
 @app.route("/delete",methods=["GET","POST"])
@@ -99,8 +99,8 @@ def home():
 				con.commit()
 			with sqlite3.connect("first.db") as con:
 				cur = con.cursor()
-				cur.execute("INSERT into visit(visitor,visitor_email,host,timestart) values(?,?,?,?)",
-					(name,email,host,time_start))
+				cur.execute("INSERT into visit(visitor,visitor_email,visitor_phone,host,timestart) values(?,?,?,?,?)",
+					(name,email,phone,host,time_start))
 			new=[]
 			for hosta in hosts1:
 				if (hosta[1],) in busy:
@@ -119,12 +119,13 @@ def home():
 		elif takechat==True:
 			with sqlite3.connect("first.db") as con:
 				cur = con.cursor()
-				cur.execute("INSERT into visit(visitor,visitor_email,host,timestart) values(?,?,?,?)",
-					(name,email,host,time_start))
-				cur.execute("INSERT into messages(sender,message) values(?,?)",(name,"hi"))
+				cur.execute("INSERT into visit(visitor,visitor_email,visitor_phone,host,timestart) values(?,?,?,?,?)",
+					(name,email,phone,host,time_start))
+				cur.execute("INSERT into messages(sender,message) values(?,?)",(name,"HI!"))
 				con.commit()	
 			print(url_for("messaginghost",visitor=name,host=host))
-			print(name,host)
+			send_host_start_chat(name,host,email,time_date,time_start,"http://127.0.0.1:5000"+(url_for("messaginghost",visitor=name,host=host)))
+			send_text_host_start_chat(name,host,email,time_date,time_start,"http://127.0.0.1:5000"+(url_for("messaginghost",visitor=name,host=host)))
 			return(render_template("msgstart.html",link = url_for("messagingvisitor",visitor=name,host=host)))
 	elif request.method == "GET":
 		named_tuple = time.localtime() 
@@ -189,7 +190,9 @@ def messagingvisitor(visitor,host):
 		print(msg,file=sys.stderr)
 		with sqlite3.connect("first.db") as con:
 			cur = con.cursor()
-			cur.execute("DELETE FROM messages where sender=(?)",(visitor,))
+			cur.execute("INSERT INTO messages(sender,message) values(?,?)",(visitor,msg))
+			cur.execute("SELECT * from messages")
+			allmsg=cur.fetchall()
 			cur.execute("SELECT message from messages WHERE sender=(?)",(visitor,))
 			msge = cur.fetchone()
 		if msge==None:
@@ -233,12 +236,11 @@ def visiturl(visitor):
 			details = cur.fetchone()
 			cur.execute("DELETE FROM visit WHERE visitor=(?)",(visitor,))
 			cur.execute("DELETE FROM messages WHERE sender=(?)",(visitor,))
-			cur.execute("DELETE FROM messages WHERE sender=(?)",(details[3],))
-			cur.execute("DELETE FROM messages WHERE sender=(?)",(details[3],))
-			cur.execute("INSERT INTO totallog(visitor,visitor_email,host,timestart,timeend,dat) values(?,?,?,?,?,?)",(details[1],details[2],details[3],details[4],time_start,time_date))
+			cur.execute("DELETE FROM messages WHERE sender=(?)",(details[4],))
+			cur.execute("INSERT INTO totallog(visitor,visitor_email,visitor_phone,host,timestart,timeend,dat) values(?,?,?,?,?,?,?)",(details[1],details[2],details[3],details[4],details[5],time_start,time_date))
 		send_visitor_2(visitor,details[2])
 		send_text_visitor_2(visitor)
-		return(render_template("end.html",host=details[3],timestart=details[4],timeend=time_start))
+		return(render_template("end.html",host=details[4],timestart=details[5],timeend=time_start))
 if __name__=="__main__":
 	SECRET_KEY = os.urandom(32)
 	app.config['SECRET_KEY'] = SECRET_KEY
@@ -246,7 +248,7 @@ if __name__=="__main__":
 	curs = con.cursor()
 	curs.execute("CREATE TABLE IF NOT EXISTS messages(id integer PRIMARY KEY, sender text, message text)")
 	curs.execute("CREATE TABLE IF NOT EXISTS hosts(id integer PRIMARY KEY, name text, email text, address text, phone real)")
-	curs.execute("CREATE TABLE IF NOT EXISTS totallog(id integer PRIMARY KEY, visitor text, visitor_email text, vistitor_phone real, host text, timestart text, timeend text, dat text)")
-	curs.execute("CREATE TABLE IF NOT EXISTS visit(id integer PRIMARY KEY, visitor text,visitor_email text, host text, timestart text)")
+	curs.execute("CREATE TABLE IF NOT EXISTS totallog(id integer PRIMARY KEY, visitor text, visitor_email text, visitor_phone real, host text, timestart text, timeend text, dat text)")
+	curs.execute("CREATE TABLE IF NOT EXISTS visit(id integer PRIMARY KEY, visitor text,visitor_email text,visitor_phone real, host text, timestart text)")
 	con.commit()
 	app.run(debug=True)

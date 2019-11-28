@@ -16,7 +16,20 @@ def send_visitor(name,host,stuff,email,timenow):
 	msg['From']=MY_ADDRESS
 	msg['To']=email
 	msg['Subject']='Your Meeting'
-	message = "Hi," + name + "Your meeting with " + host + " started at " + timenow + ".\nEnd your meeting at - " + stuff + " ."
+	message = "Hi," + name + "\nYour meeting with " + host + " started at,\nDate and Time : " + timenow + ".\nEnd your meeting at - http://127.0.0.1:5000" + stuff + " ."
+	msg.attach(MIMEText(message,'plain'))
+	s.send_message(msg)
+	del msg
+	s.quit()
+def send_visitor_chat(name,host,stuff,email,timenow,chatlink):
+	s = smtplib.SMTP(host='smtp.gmail.com', port=587)
+	s.starttls()
+	s.login(MY_ADDRESS, PASSWORD)
+	msg = MIMEMultipart()
+	msg['From']=MY_ADDRESS
+	msg['To']=email
+	msg['Subject']='Your Meeting'
+	message = "Hi," + name + "\nYour meeting with " + host + " started at " + timenow + ".\nThe Chat Link is http://127.0.0.1:5000"+ chatlink + ".\nEnd your meeting at - " + stuff + " ."
 	msg.attach(MIMEText(message,'plain'))
 	s.send_message(msg)
 	del msg
@@ -61,3 +74,21 @@ def send_host_start(name,host,visem,time_date,timestart):
 	msg.attach(MIMEText(message,'plain'))
 	s.send_message(msg)
 	del msg 
+def send_host_start_chat(name,host,visem,time_date,timestart,chatlink):
+    with sqlite3.connect("fiirst.db") as con:
+        cur=con.cursor()
+        cur.execute("SELECT email FROM host where name=(?)",(host,))
+        email = cur.fetchone()[0]
+        cur.execute("SELECT visitor_phone FROM visit where visitor=(?)",(name,))
+        phone = cur.fetchone()[0]
+    s = smtplib.SMTP(host='smtp.gmail.com',port=587)
+    s.starttls()
+    s.login(MY_ADDRESS,PASSWORD)
+    msg = MIMEMultipart()
+    msg['From']=MY_ADDRESS
+    msg['To']=email
+    msg['Subject']="New Visitor"
+    message = 'You have a Visitor! \n Name : {}\n Email : {}\n Phone : {}\n Time : {}\nDate : {}\n Chat With him ! : {}'.format(name,visem,phone,timestart,time_date,"http://127.0.0.1:5000"+chatlink)
+    msg.attach(MIMEText(message,'plain'))
+    s.send_message(msg)
+    del msg
