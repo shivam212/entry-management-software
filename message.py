@@ -75,9 +75,9 @@ def send_host_start(name,host,visem,time_date,timestart):
 	s.send_message(msg)
 	del msg 
 def send_host_start_chat(name,host,visem,time_date,timestart,chatlink):
-    with sqlite3.connect("fiirst.db") as con:
+    with sqlite3.connect("first.db") as con:
         cur=con.cursor()
-        cur.execute("SELECT email FROM host where name=(?)",(host,))
+        cur.execute("SELECT email FROM hosts where name=(?)",(host,))
         email = cur.fetchone()[0]
         cur.execute("SELECT visitor_phone FROM visit where visitor=(?)",(name,))
         phone = cur.fetchone()[0]
@@ -88,7 +88,7 @@ def send_host_start_chat(name,host,visem,time_date,timestart,chatlink):
     msg['From']=MY_ADDRESS
     msg['To']=email
     msg['Subject']="New Visitor"
-    message = 'You have a Visitor! \n Name : {}\n Email : {}\n Phone : {}\n Time : {}\nDate : {}\n Chat With him ! : {}'.format(name,visem,phone,timestart,time_date,"http://127.0.0.1:5000"+chatlink)
+    message = 'You have a Visitor! \n Name : {}\n Email : {}\n Phone : {}\n Time : {}\nDate : {}\n Chat With him ! : {}'.format(name,visem,str(int(phone)),timestart,time_date,chatlink)
     msg.attach(MIMEText(message,'plain'))
     s.send_message(msg)
     del msg

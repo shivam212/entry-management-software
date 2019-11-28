@@ -19,13 +19,33 @@ This triggers an email & text to the host informing him of the appointment, also
 
 #### Host Email
 
-![alt text](images/hostmail.png)
+![alt text](images/meetingstarthostmail.jpeg)
+
+#### Host Phone
+
+![alt text](images/meetingstarthosttext.jpeg)
+
+#### Visitor Email to end Appointment
+
+![alt text](images/visitmsg.jpeg)
+
+#### Visitor Message to end Appointment
+
+![alt text](images/visitmsg.jpeg)
 
 ### Taking an Remote Appointment(Chat)
 
 The main home page also features this functionality(see photo above), this feature allows the visitor to take a remote appointment i.e chat with the host, can be used when the host is working from home, this feature enables the host to still keep their meeting schedule intact without any hindrance.
 
-When clicked, links are sent to both the host and visitor with the links for their corresponding chatboxes, these pages also feature a link to end the ongoing appointment at any time.
+When clicked, links are sent to the host for their corresponding chatboxes, while the  visitor chatbox is opened when the appointment is taken itself, these pages also feature a link to end the ongoing appointment at any time.
+
+#### Host Text with link for the chat
+
+![alt text](images/txtstartchat.jpeg)
+
+#### Host Mail with link for the chat 
+
+![alt text](images/mailstartchat.jpeg)
 
 #### Visitor ChatBox
 
@@ -45,12 +65,17 @@ The meetings can be ended by the Visitor by visiting the link sent to them.
 ![alt text](images/meetingend.png)
 
 When the meeeting is ended by the visitor, a page with details of the meetings is shown to them, also the email and text is sent with the details.
-#### Email & Text
-(add images text, email)
+#### Visitor Email
+
+![alt text](images/meetingendmail.jpeg)
+
+#### Visitor Text
+
+![alt text](images/visitendmsg.jpeg)
 
 #### Detail Page
 
-![alt text](images/Details.png)
+![alt text](images/details.png)
 
 ### Host Panel
 
