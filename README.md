@@ -13,13 +13,13 @@ This is a project for innovacer-summergeeks 2020, you can find the problem state
 
 The main home page features this functionality, the visitors can select from the hosts that are available, provide their details and instantly start an appointment.
 
-![alt text](takeappoint.png)
+![alt text](images/takeappoint.png)
 
 This triggers an email & text to the host informing him of the appointment, also triggers an email & text to the visitor containing details about the appointment and a link to end the appointment
 
 #### Host Email
 
-![alt text](hostmail.png)
+![alt text](images/hostmail.png)
 
 ### Taking an Remote Appointment(Chat)
 
@@ -29,10 +29,10 @@ When clicked, links are sent to both the host and visitor with the links for the
 
 #### Visitor ChatBox
 
-![alt text](visitorchatbox.png)
+![alt text](images/visitorchatbox.png)
 
 #### Host ChatBox
-![alt text](hostchatbox.png)
+![alt text](images/hostchatbox.png)
 
 The messages work in real-time.
 
@@ -42,7 +42,7 @@ The messages work in real-time.
 
 The meetings can be ended by the Visitor by visiting the link sent to them.
 
-![alt text](meetingend.png)
+![alt text](images/meetingend.png)
 
 When the meeeting is ended by the visitor, a page with details of the meetings is shown to them, also the email and text is sent with the details.
 #### Email & Text
@@ -50,7 +50,7 @@ When the meeeting is ended by the visitor, a page with details of the meetings i
 
 #### Detail Page
 
-![alt text](Details.png)
+![alt text](images/Details.png)
 
 ### Host Panel
 
@@ -61,23 +61,23 @@ The Host Panel features -
 
 New hosts can be added here.
 
-![alt text](addhost.png)
+![alt text](images/addhost.png)
 
 #### Delete Host
 
 Saved hosts can be deleted here.
 
-![alt text](deletehost.png)
+![alt text](images/deletehost.png)
 
 #### Host Details
 
 This lists details available for meetings held by the selected host.
 
-![alt text](hostdetail1.png)
+![alt text](images/hostdetail1.png)
 
 When selected, the page shows the details -
 
-![alt text](details2.png)
+![alt text](images/details2.png)
 
 ## Tech Stack
 
