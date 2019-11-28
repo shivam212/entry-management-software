@@ -8,7 +8,7 @@ from sqlite3 import Error
 from string import Template
 MY_ADDRESS = 'managerentry@gmail.com'
 PASSWORD = 'timepass9'
-def send_visitor(name,host,stuff,email,timenow):
+def send_visitor(name,host,stuff,email,timenow):#sends start mail
 	s = smtplib.SMTP(host='smtp.gmail.com', port=587)
 	s.starttls()
 	s.login(MY_ADDRESS, PASSWORD)
@@ -21,7 +21,7 @@ def send_visitor(name,host,stuff,email,timenow):
 	s.send_message(msg)
 	del msg
 	s.quit()
-def send_visitor_chat(name,host,stuff,email,timenow,chatlink):
+def send_visitor_chat(name,host,stuff,email,timenow,chatlink):#sends chat start mail to visitor
 	s = smtplib.SMTP(host='smtp.gmail.com', port=587)
 	s.starttls()
 	s.login(MY_ADDRESS, PASSWORD)
@@ -34,7 +34,7 @@ def send_visitor_chat(name,host,stuff,email,timenow,chatlink):
 	s.send_message(msg)
 	del msg
 	s.quit()		
-def send_visitor_2(name,email):
+def send_visitor_2(name,email):#sends meeting end mail
 	with sqlite3.connect("first.db") as con:
 		cur = con.cursor()
 		cur2 = con.cursor()
@@ -42,9 +42,6 @@ def send_visitor_2(name,email):
 		answer = cur.fetchone()
 		cur2.execute("SELECT address,phone FROM hosts WHERE name=(?)",(answer[0],))
 		answer2 = cur2.fetchone()
-		print((answer), file=sys.stderr)
-		print((answer2), file=sys.stderr)
-		# con.commit()
 	s = smtplib.SMTP(host='smtp.gmail.com', port=587)
 	s.starttls()
 	s.login(MY_ADDRESS, PASSWORD)
@@ -57,12 +54,11 @@ def send_visitor_2(name,email):
 	s.send_message(msg)
 	del msg
 	s.quit()
-def send_host_start(name,host,visem,time_date,timestart):
+def send_host_start(name,host,visem,time_date,timestart):#sends meeting start mail to host
 	with sqlite3.connect("first.db") as con:
 		cur = con.cursor()
 		cur.execute("SELECT email FROM hosts WHERE name=(?)",(host,))
 		email = cur.fetchone()[0]
-		# print(email, file=sys.stderr)
 	s = smtplib.SMTP(host='smtp.gmail.com', port=587)
 	s.starttls()
 	s.login(MY_ADDRESS, PASSWORD)
@@ -74,7 +70,7 @@ def send_host_start(name,host,visem,time_date,timestart):
 	msg.attach(MIMEText(message,'plain'))
 	s.send_message(msg)
 	del msg 
-def send_host_start_chat(name,host,visem,time_date,timestart,chatlink):
+def send_host_start_chat(name,host,visem,time_date,timestart,chatlink):#sends chat start mail to host
     with sqlite3.connect("first.db") as con:
         cur=con.cursor()
         cur.execute("SELECT email FROM hosts where name=(?)",(host,))

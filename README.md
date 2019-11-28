@@ -139,6 +139,8 @@ I chose to use SQLite3 as the database client becuase
 1. SQL commands can be used to maintain the database.
 2. Embedded in the app so greater degree of freedom.
 3. Nice integration with Flask.
+4. I can easily select details I want to show or use using simple SQL, like here in the documentation, I have not included Phone No and email at some places, these can be very easily changed by simply adding an extra SELECT call.
+
 
 The emails were sent using smtplib and messages using the Twilio API.
 
