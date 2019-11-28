@@ -4,7 +4,8 @@ This is a project for innovacer-summergeeks 2020, you can find the problem state
 ## Table of Contents
 
 1. [Installation](#Installation)
-2. [Features](#Features)  
+2. [Setup](#Setup)
+3. [Features](#Features)  
     1.[Taking an Appointment](#Taking-an-Appointment)
 
 
@@ -13,13 +14,26 @@ This is a project for innovacer-summergeeks 2020, you can find the problem state
     3.[Ending Appointment](#Ending-Appointment)
 
     4.[Host Panel](#Host-Panel)    
-3. [Tech Stack](#Tech-Stack)
+4. [Tech Stack](#Tech-Stack)
+5. [Contact Me](#Contact-Me)
 ## Installation
 1. Clone this repository.
 2. Install the pre-requisites. To install via pip -
 
 
 `pip3 install -r requirements.txt` 
+
+## Setup
+1. Go into message.py and put your Gmail ID and Password there, make sure you have allowed access to less secure apps in the settings.
+
+2. Go to Twilio and generate your Account SID and Authorisation token, you can follow this guide - [https://www.twilio.com/docs/sms/quickstart/python].
+3. Make sure you have Python3 and other dependencies installed.
+
+4. Run -
+
+` python3 main.py `
+
+5. Your server will now be up and running on - [http://127.0.0.1:5000]
 
 ## Features
 
@@ -144,3 +158,5 @@ I chose to use SQLite3 as the database client becuase
 
 The emails were sent using smtplib and messages using the Twilio API.
 
+## Contact Me
+You can contact me at - shivamsinha212@gmail.com .

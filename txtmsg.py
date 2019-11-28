@@ -1,8 +1,8 @@
 import sqlite3
 import sys
 from twilio.rest import Client
-ACCOUNT_SID=""
-AUTH_TOKEN=""
+ACCOUNT_SID=""#Put Twilio Account SID here
+AUTH_TOKEN=""#Put Authorisation Token here
 def send_text_visitor(name,host,stuff,phone,timenow):#sends start text
     message = "Hi," + name + "\nYour meeting with " + host + " started at " + timenow + ".\nEnd your meeting at - http://127.0.0.1:5000" + stuff + " ."
     client = Client(ACCOUNT_SID, AUTH_TOKEN)
