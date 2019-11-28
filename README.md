@@ -27,7 +27,7 @@ This triggers an email & text to the host informing him of the appointment, also
 
 #### Visitor Email to end Appointment
 
-![alt text](images/visitmsg.jpeg)
+![alt text](images/visitendmail.jpeg)
 
 #### Visitor Message to end Appointment
 
