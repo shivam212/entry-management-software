@@ -1,5 +1,19 @@
 # Entry-Management-Software
 This is a project for innovacer-summergeeks 2020, you can find the problem statement here - [Link](https://summergeeks.in/static/assignments/summergeeks%202020%20-%20SDE%20Assignment.pdf).
+
+## Table of Contents
+
+1. [Installation](#Installation)
+2. [Features](#Features)  
+    1.[Taking an Appointment](#Taking-an-Appointment)
+
+
+    2.[Taking an Remote Appointment(Chat)](#Taking-and-Remote-Appointment(Chat))
+    
+    3.[Ending Appointment](#Ending-Appointment)
+
+    4.[Host Panel](#Host-Panel)    
+3. [Tech Stack](#Tech-Stack)
 ## Installation
 1. Clone this repository.
 2. Install the pre-requisites. To install via pip -
