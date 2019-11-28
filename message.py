@@ -6,8 +6,8 @@ from email.mime.text import MIMEText
 from time import gmtime, strftime
 from sqlite3 import Error
 from string import Template
-MY_ADDRESS = 'managerentry@gmail.com'
-PASSWORD = 'timepass9'
+MY_ADDRESS = ''
+PASSWORD = ''
 def send_visitor(name,host,stuff,email,timenow):#sends start mail
 	s = smtplib.SMTP(host='smtp.gmail.com', port=587)
 	s.starttls()
