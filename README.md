@@ -158,5 +158,8 @@ I chose to use SQLite3 as the database client becuase
 
 The emails were sent using smtplib and messages using the Twilio API.
 
-## Contact Me
-You can contact me at - shivamsinha212@gmail.com .
+## Contact Me 
+You can contact me at - shivamsinha212@gmail.com or erocodesenin@gmail.com .
+
+
+The other contributor is me only, I was using that ID to commit as I wanted to keep my work safe and private, the work is hosted on this as this also incudes all my other work. 
