@@ -1,7 +1,7 @@
 Flask==1.0.2
 Flask-Cors==3.0.4
 Flask-WTF==0.14.2
-Jinja2==2.10
+Jinja2==2.11.3
 requests==2.18.4
 SQLAlchemy==1.2.7
 twilio==6.33.1
